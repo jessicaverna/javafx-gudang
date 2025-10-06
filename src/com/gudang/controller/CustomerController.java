@@ -91,7 +91,19 @@ public class CustomerController {
 
     @FXML
     private void handleHapusCustomer() {
-        // TODO: Implementasi hapus customer
+        Customer selectedCustomer = tableCustomer.getSelectionModel().getSelectedItem();
+
+        if (selectedCustomer == null) {
+            showAlert("Pilih customer yang akan dihapus!");
+            return;
+        }
+
+        // Tampilkan konfirmasi
+        boolean confirmed = showConfirmDialog("Apakah Anda yakin ingin menghapus customer ini?");
+
+        if (confirmed) {
+            customerList.remove(selectedCustomer);
+        }
     }
 
     // Method untuk menambah customer ke tabel
@@ -125,6 +137,28 @@ public class CustomerController {
             stage.showAndWait();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private boolean showConfirmDialog(String message) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/ConfirmDialog.fxml"));
+            Scene scene = new Scene(loader.load());
+
+            ConfirmDialogController controller = loader.getController();
+            controller.setMessage(message);
+
+            Stage stage = new Stage();
+            stage.setTitle("Konfirmasi");
+            stage.setScene(scene);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setResizable(false);
+            stage.showAndWait();
+
+            return controller.isConfirmed();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }
