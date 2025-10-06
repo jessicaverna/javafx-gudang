@@ -64,7 +64,29 @@ public class CustomerController {
 
     @FXML
     private void handleEditCustomer() {
-        // TODO: Implementasi edit customer
+        Customer selectedCustomer = tableCustomer.getSelectionModel().getSelectedItem();
+
+        if (selectedCustomer == null) {
+            showAlert("Pilih customer yang akan diedit!");
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/EditCustomer.fxml"));
+            Scene scene = new Scene(loader.load());
+
+            EditCustomerController controller = loader.getController();
+            controller.setCustomer(selectedCustomer);
+            controller.setCustomerController(this);
+
+            Stage stage = new Stage();
+            stage.setTitle("Edit Customer");
+            stage.setScene(scene);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -77,8 +99,32 @@ public class CustomerController {
         customerList.add(customer);
     }
 
+    // Method untuk refresh tabel
+    public void refreshTable() {
+        tableCustomer.refresh();
+    }
+
     // Method untuk cek apakah ID sudah ada
     public boolean isIdExists(String id) {
         return customerList.stream().anyMatch(c -> c.getId().equals(id));
+    }
+
+    private void showAlert(String message) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/ErrorDialog.fxml"));
+            Scene scene = new Scene(loader.load());
+
+            ErrorDialogController controller = loader.getController();
+            controller.setMessage(message);
+
+            Stage stage = new Stage();
+            stage.setTitle("Error");
+            stage.setScene(scene);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setResizable(false);
+            stage.showAndWait();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
